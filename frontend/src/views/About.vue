@@ -1,0 +1,86 @@
+<template>
+  <div class="min-h-screen pt-24 pb-20 px-4 relative overflow-hidden">
+    <div class="max-w-6xl mx-auto relative z-10">
+      <h2 class="section-title animate-fade-in-up">About The Architect</h2>
+      
+      <div class="flex flex-col lg:flex-row gap-12 mt-12">
+        <div class="lg:w-1/3 animate-fade-in-up" style="animation-delay: 0.1s;">
+          <div class="glass-card p-1 rounded-3xl sticky top-28">
+            <div class="bg-dark rounded-[22px] overflow-hidden relative group">
+              <div class="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+              <img src="https://source.unsplash.com/random/400x500/?cyberpunk,developer" alt="Developer" class="w-full h-auto object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22400%22%20height%3D%22500%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%20500%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231e293b%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f172a%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url(%23g)%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20font-family%3D%22sans-serif%22%20font-size%3D%2248%22%20text-anchor%3D%22middle%22%20fill%3D%22%23475569%22%20dy%3D%22.3em%22%3E%E2%80%8D%F0%9F%92%BB%3C%2Ftext%3E%3C%2Fsvg%3E'"/>
+              <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-dark to-transparent z-20">
+                <h3 class="text-2xl font-bold text-white mb-1">boniq</h3>
+                <p class="text-primary font-medium">Lead Software Engineer</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="lg:w-2/3 flex flex-col gap-8">
+          <div class="glass-card p-8 rounded-2xl animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="text-3xl">📖</span>
+              <h3 class="text-3xl font-display font-bold text-white">The Genesis</h3>
+            </div>
+            <div class="space-y-4 text-slate-300 leading-relaxed text-lg">
+              <p>
+                My journey began with a simple curiosity: <span class="text-white font-medium">How do things work behind the screen?</span> 
+                That single question sparked an obsession with coding that has driven my career for over half a decade. 
+              </p>
+              <p>
+                I am not just a developer; I am a digital craftsman. I specialize in building immersive web experiences that feel alive, utilizing the modern web stack to create applications that are as beautiful under the hood as they are on the surface.
+              </p>
+            </div>
+          </div>
+          
+          <div class="glass-card p-8 rounded-2xl animate-fade-in-up" style="animation-delay: 0.3s;">
+             <div class="flex items-center gap-3 mb-8">
+              <span class="text-3xl">⚔️</span>
+              <h3 class="text-3xl font-display font-bold text-white">Professional Quests</h3>
+            </div>
+            
+            <div class="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300/20 before:to-transparent">
+              
+              <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-dark group-hover:border-primary group-hover:scale-110 transition-all duration-300 text-primary shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                  <span>✨</span>
+                </div>
+                <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-2xl bg-white/5 border border-white/10 group-hover:border-primary/50 group-hover:bg-white/10 transition-all duration-300">
+                  <div class="flex items-center justify-between mb-2">
+                    <h4 class="font-bold text-lg text-white">Senior Frontend Engineer</h4>
+                    <span class="text-xs font-medium text-primary px-2 py-1 rounded bg-primary/10">2021 - Present</span>
+                  </div>
+                  <div class="text-sm font-medium text-slate-400 mb-3 hover:text-white transition-colors">TechCorp Systems</div>
+                  <p class="text-sm text-slate-400 leading-relaxed">
+                    Architected a micro-frontend ecosystem that reduced deployment times by 60% and unified the UI across 5 product teams.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-dark group-hover:border-secondary group-hover:scale-110 transition-all duration-300 text-secondary shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                  <span>🚀</span>
+                </div>
+                <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-2xl bg-white/5 border border-white/10 group-hover:border-secondary/50 group-hover:bg-white/10 transition-all duration-300">
+                  <div class="flex items-center justify-between mb-2">
+                    <h4 class="font-bold text-lg text-white">Full Stack Developer</h4>
+                    <span class="text-xs font-medium text-secondary px-2 py-1 rounded bg-secondary/10">2018 - 2021</span>
+                  </div>
+                  <div class="text-sm font-medium text-slate-400 mb-3 hover:text-white transition-colors">Nexus Digital</div>
+                  <p class="text-sm text-slate-400 leading-relaxed">
+                    Developed scalable E-commerce platforms in React and Node.js serving over 100k Monthly Active Users.
+                  </p>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+</style>
