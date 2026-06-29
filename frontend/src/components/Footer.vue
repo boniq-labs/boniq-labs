@@ -5,9 +5,15 @@
 
     <div class="container max-w-6xl mx-auto px-4 relative z-10">
       <div class="flex flex-col items-center text-center">
-        <router-link to="/" class="inline-flex items-center gap-2 mb-6">
-          <img v-if="logoUrl" :src="logoUrl" class="h-8 w-auto" alt="boniq" />
-          <span v-else class="text-3xl font-display font-extrabold"><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">boniq</span></span>
+        <router-link to="/" class="inline-flex items-center gap-3 mb-8 group relative">
+          <div v-if="logoUrl" class="relative flex items-center justify-center p-2 rounded-2xl bg-white/[0.03] border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.3)] backdrop-blur-xl group-hover:bg-white/[0.08] group-hover:border-white/20 transition-all duration-500 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-tr from-primary/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <img :src="logoUrl" class="h-10 md:h-12 w-auto relative z-10 transition-all duration-700 group-hover:scale-110 drop-shadow-md group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" alt="Logo" />
+          </div>
+          <span v-else class="text-4xl font-display font-extrabold tracking-tight relative">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent group-hover:from-blue-400 group-hover:to-purple-400 transition-all drop-shadow-lg relative z-10">boniq</span>
+            <span class="absolute -inset-4 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full pointer-events-none"></span>
+          </span>
         </router-link>
         <h2 class="text-3xl md:text-4xl font-display font-extrabold text-white mb-4 tracking-tight">
           Ready to build something <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">amazing?</span>

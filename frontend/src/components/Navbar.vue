@@ -1,10 +1,14 @@
 <template>
   <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" :class="{ 'backdrop-blur-xl bg-dark/80 border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)] py-3': scrolled, 'py-5 bg-transparent': !scrolled }">
     <div class="container max-w-6xl mx-auto px-4 flex justify-between items-center">
-      <router-link to="/" class="flex items-center gap-2 group">
-        <img v-if="logoUrl" :src="logoUrl" class="h-9 w-auto transition-transform duration-300 group-hover:scale-105" alt="boniq" />
-        <span v-else class="text-2xl font-display font-extrabold tracking-tight">
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent group-hover:from-blue-400 group-hover:to-purple-400 transition-all drop-shadow-md">boniq</span>
+      <router-link to="/" class="flex items-center gap-3 group relative">
+        <div v-if="logoUrl" class="relative flex items-center justify-center p-1.5 rounded-xl bg-white/[0.03] border border-white/10 shadow-lg backdrop-blur-md group-hover:bg-white/[0.08] group-hover:border-white/20 transition-all duration-500 overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-tr from-primary/30 to-accent/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <img :src="logoUrl" class="h-9 md:h-10 w-auto relative z-10 transition-all duration-500 group-hover:scale-110 drop-shadow-sm group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.4)]" alt="Logo" />
+        </div>
+        <span v-else class="text-2xl font-display font-extrabold tracking-tight relative">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent group-hover:from-blue-400 group-hover:to-purple-400 transition-all drop-shadow-md relative z-10">boniq</span>
+          <span class="absolute -inset-2 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full pointer-events-none"></span>
         </span>
       </router-link>
       
