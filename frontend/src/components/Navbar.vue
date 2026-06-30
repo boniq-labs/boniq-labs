@@ -78,7 +78,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import api from '@/api/api';
 
 let authStore = null;
 try {
@@ -103,7 +103,7 @@ onMounted(async () => {
   window.addEventListener('scroll', handleScroll);
   if (!logoUrl.value) {
     try {
-      const res = await axios.get('/api/profile');
+      const res = await api.get('/api/profile');
       if (res.data?.logoUrl) {
         logoUrl.value = res.data.logoUrl;
         localStorage.setItem('boniq_logo', res.data.logoUrl);

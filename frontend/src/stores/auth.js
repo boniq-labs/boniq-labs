@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import api from '@/api/api';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', {
             this.loading = true;
             this.error = null;
             try {
-                const { data } = await axios.post('/api/auth/login', { email, password });
+                const { data } = await api.post('/api/auth/login', { email, password });
                 this.user = { id: data._id, name: data.name, email: data.email };
                 this.token = data.token;
 
@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', {
                 localStorage.setItem('boniq_token', this.token);
 
                 try {
-                    const profileRes = await axios.get('/api/profile');
+                    const profileRes = await api.get('/api/profile');
                     if (profileRes.data?.logoUrl) {
                         this.logoUrl = profileRes.data.logoUrl;
                         localStorage.setItem('boniq_logo', profileRes.data.logoUrl);
@@ -44,7 +44,7 @@ export const useAuthStore = defineStore('auth', {
         },
         async loadProfile() {
             try {
-                const profileRes = await axios.get('/api/profile');
+                const profileRes = await api.get('/api/profile');
                 if (profileRes.data?.logoUrl) {
                     this.logoUrl = profileRes.data.logoUrl;
                     localStorage.setItem('boniq_logo', profileRes.data.logoUrl);

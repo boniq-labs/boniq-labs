@@ -125,7 +125,7 @@
 
 <script setup>
 import { reactive, ref } from 'vue';
-import axios from 'axios';
+import api from '@/api/api';
 
 const formData = reactive({
   name: '',
@@ -144,7 +144,7 @@ const submitMessage = async () => {
   errorMsg.value = '';
   
   try {
-    await axios.post('/api/messages', formData);
+    await api.post('/api/messages', formData);
     successMsg.value = 'Message transmitted successfully! Awaiting response...';
     // Reset form
     formData.name = '';

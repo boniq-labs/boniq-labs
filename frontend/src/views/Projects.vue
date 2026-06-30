@@ -51,7 +51,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/api/api';
 import ProjectCard from '../components/ProjectCard.vue';
 
 const projects = ref([]);
@@ -61,7 +61,7 @@ const activeFilter = ref('All');
 
 onMounted(async () => {
   try {
-    const { data } = await axios.get('/api/projects');
+    const { data } = await api.get('/api/projects');
     projects.value = data;
     loading.value = false;
   } catch (err) {

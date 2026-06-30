@@ -96,7 +96,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import api from '@/api/api';
 
 const router = useRouter();
 const profileClicks = ref(0);
@@ -132,7 +132,7 @@ const handleProfileClick = () => {
 
 onMounted(async () => {
   try {
-    const res = await axios.get('/api/profile');
+    const res = await api.get('/api/profile');
     if (res.data) {
       profile.value = res.data;
     }
@@ -142,7 +142,7 @@ onMounted(async () => {
     loading.value = false;
   }
   try {
-    await axios.post('/api/stats/visit');
+    await api.post('/api/stats/visit');
   } catch(e) {
     console.error('Could not log visit', e);
   }

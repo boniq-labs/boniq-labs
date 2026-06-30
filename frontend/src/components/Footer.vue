@@ -45,14 +45,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/api/api';
 
 const logoUrl = ref(localStorage.getItem('boniq_logo') || null);
 
 onMounted(async () => {
   if (!logoUrl.value) {
     try {
-      const res = await axios.get('/api/profile');
+      const res = await api.get('/api/profile');
       if (res.data?.logoUrl) {
         logoUrl.value = res.data.logoUrl;
         localStorage.setItem('boniq_logo', res.data.logoUrl);

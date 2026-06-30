@@ -46,7 +46,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/api/api';
 import SkillBar from '../components/SkillBar.vue';
 
 const skills = ref([]);
@@ -67,7 +67,7 @@ const getCategoryIcon = (category) => {
 
 onMounted(async () => {
   try {
-    const { data } = await axios.get('/api/skills');
+    const { data } = await api.get('/api/skills');
     skills.value = data;
     loading.value = false;
   } catch (err) {

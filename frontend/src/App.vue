@@ -20,13 +20,13 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/api/api';
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
 
 onMounted(async () => {
   try {
-    const res = await axios.get('/api/profile');
+    const res = await api.get('/api/profile');
     if (res.data) {
       const siteName = res.data.name || 'boniq';
       document.title = `${siteName} - Developer Portfolio`;
