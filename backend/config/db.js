@@ -12,11 +12,26 @@ const dbPort = process.env.MYSQLPORT || process.env.DB_PORT || 3306;
 // Allow direct connection URL if provided (Railway provides MYSQL_PUBLIC_URL or MYSQL_URL)
 const connectionUrl = process.env.MYSQL_PUBLIC_URL || process.env.MYSQL_URL;
 
+const isProduction = process.env.NODE_ENV === 'production';
+const isRailway = !!connectionUrl && (connectionUrl.includes('railway') || connectionUrl.includes('rlwy'));
+
 let sequelize;
 if (connectionUrl) {
   sequelize = new Sequelize(connectionUrl, {
     dialect: 'mysql',
     logging: false,
+    dialectOptions: isRailway ? {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    } : {},
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
   });
 } else {
   sequelize = new Sequelize(
@@ -28,6 +43,12 @@ if (connectionUrl) {
       port: dbPort,
       dialect: 'mysql',
       logging: false,
+      pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+      }
     }
   );
 }
@@ -53,8 +74,12 @@ const connectDB = async () => {
     await sequelize.authenticate();
     console.log(`MySQL Connected via Sequelize: ${dbName}`);
     
-    // Sync models
-    await sequelize.sync({ alter: true });
+    // Sync models - use alter in development, but be careful in production
+    if (isProduction) {
+      await sequelize.sync({ alter: true });
+    } else {
+      await sequelize.sync({ alter: true });
+    }
     console.log(`All models were synchronized successfully.`);
   } catch (error) {
     console.error(`Error connecting to MySQL: ${error.message}`);

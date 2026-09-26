@@ -71,18 +71,7 @@ onMounted(async () => {
     skills.value = data;
     loading.value = false;
   } catch (err) {
-    // Generate fallback data
-    skills.value = [
-      { name: 'Vue.js', category: 'Frontend', level: 95 },
-      { name: 'React', category: 'Frontend', level: 85 },
-      { name: 'Tailwind CSS', category: 'Frontend', level: 90 },
-      { name: 'Node.js', category: 'Backend', level: 88 },
-      { name: 'Express', category: 'Backend', level: 85 },
-      { name: 'MongoDB', category: 'Database', level: 80 },
-      { name: 'PostgreSQL', category: 'Database', level: 75 },
-      { name: 'Git & GitHub', category: 'Tools', level: 90 },
-      { name: 'Docker', category: 'DevOps', level: 70 }
-    ];
+    error.value = err.response?.data?.message || 'Failed to load skills. Please check your connection.';
     loading.value = false;
   }
 });

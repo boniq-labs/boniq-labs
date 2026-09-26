@@ -3,8 +3,9 @@ import User from '../models/User.js';
 
 const initAdmin = async () => {
   try {
-    const adminEmail = 'admin@system';
-    const adminName = 'goxriddle';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@system';
+    const adminName = process.env.ADMIN_NAME || 'goxriddle';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'gutuza.24@';
     
     const adminExists = await User.findOne({ 
       where: { 
@@ -20,9 +21,11 @@ const initAdmin = async () => {
       await User.create({
         name: adminName,
         email: adminEmail,
-        password: 'gutuza.24@'
+        password: adminPassword
       });
       console.log('Admin user created successfully in database.');
+    } else {
+      console.log('Admin user already exists in database.');
     }
   } catch (error) {
     console.error('Error initializing admin user:', error.message);

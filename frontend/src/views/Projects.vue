@@ -65,14 +65,7 @@ onMounted(async () => {
     projects.value = data;
     loading.value = false;
   } catch (err) {
-    // Generate fallback dummy data for demo purposes if backend isn't ready
-    projects.value = [
-      { _id: '1', title: 'Cosmic Analytics Dashboard', description: 'A futuristic data visualization dashboard using WebGL and real-time streaming data.', technologies: ['Vue.js', 'Three.js', 'Tailwind CSS'], liveUrl: '#', githubUrl: '#' },
-      { _id: '2', title: 'Aura Social Network', description: 'A decentralized social platform with glassmorphism UI and end-to-end encryption built on blockchain.', technologies: ['React', 'Web3.js', 'Node.js'], liveUrl: '#', githubUrl: '#' },
-      { _id: '3', title: 'Nexus E-Commerce', description: 'Headless e-commerce platform built for speed and seamless checkout experiences with Stripe integration.', technologies: ['Next.js', 'GraphQL', 'Stripe'], liveUrl: '#', githubUrl: '#' },
-      { _id: '4', title: 'SynthWave Music Player', description: 'Web-based music player with audio visualization and a retro-futuristic aesthetic.', technologies: ['Vue.js', 'Web Audio API', 'Canvas'], liveUrl: '#', githubUrl: '#' },
-      { _id: '5', title: 'Quantum Task Manager', description: 'Real-time collaborative task manager with AI task prioritization and team analytics.', technologies: ['React', 'Firebase', 'OpenAI'], liveUrl: '#', githubUrl: '#' }
-    ];
+    error.value = err.response?.data?.message || 'Failed to load projects. Please check your connection.';
     loading.value = false;
   }
 });

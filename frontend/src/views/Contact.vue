@@ -151,16 +151,10 @@ const submitMessage = async () => {
     formData.email = '';
     formData.subject = '';
     formData.content = '';
+    loading.value = false;
   } catch (err) {
-    // If backend is down, simulate success anyway for the demo
-    setTimeout(() => {
-      successMsg.value = 'Message transmitted successfully! Awaiting response...';
-      formData.name = '';
-      formData.email = '';
-      formData.subject = '';
-      formData.content = '';
-      loading.value = false;
-    }, 1500);
+    errorMsg.value = err.response?.data?.message || 'Failed to send message. Please try again.';
+    loading.value = false;
   }
 };
 </script>
