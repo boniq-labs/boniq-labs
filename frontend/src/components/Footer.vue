@@ -15,28 +15,46 @@
             <span class="absolute -inset-4 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full pointer-events-none"></span>
           </span>
         </router-link>
+        
         <h2 class="text-3xl md:text-4xl font-display font-extrabold text-white mb-4 tracking-tight">
           Ready to build something <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">amazing?</span>
         </h2>
         <p class="text-slate-400 mb-8 max-w-lg mx-auto text-lg">
-          Let's collaborate on your next project and bring your visionary ideas to life.
+          {{ footerData.tagline || "Let's collaborate on your next project and bring your visionary ideas to life." }}
         </p>
         
         <router-link to="/contact" class="group relative px-8 py-3.5 rounded-full bg-gradient-to-r from-primary to-accent text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all duration-300 hover:-translate-y-1 mb-16 inline-flex items-center gap-2 overflow-hidden">
-          <span class="relative z-10">Start a Conversation</span>
+          <span class="relative z-10">{{ footerData.ctaText || "Start a Conversation" }}</span>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
         </router-link>
       </div>
       
-      <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="text-slate-500 text-sm font-medium flex items-center gap-2">
-          <span>&copy; {{ new Date().getFullYear() }} boniq. All Rights Reserved.</span>
-          <span class="w-1 h-1 rounded-full bg-slate-700"></span>
-          <span>Crafted with Vue.</span>
-        </div>
-        
-        <div class="text-slate-500 text-sm">
-          Aesthetically Designed Digital Experience.
+      <div class="border-t border-white/10 pt-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+          <!-- Copyright & Credits -->
+          <div class="flex flex-col md:flex-row items-center justify-center gap-4 text-slate-500 text-sm">
+            <div class="flex items-center gap-2">
+              <span>&copy; {{ new Date().getFullYear() }} {{ footerData.siteName || 'boniq' }}. {{ footerData.copyrightText || 'All Rights Reserved.' }}</span>
+            </div>
+            
+            <!-- Footer credits -->
+            <div class="flex flex-wrap items-center justify-center gap-3 text-slate-600 text-xs" v-if="footerData.showCredits">
+              <span v-for="credit in footerData.credits" :key="credit.text" class="flex items-center gap-1.5">
+                <span v-html="credit.icon"></span>
+                <span>{{ credit.text }}</span>
+              </span>
+            </div>
+          </div>
+          
+          <!-- Portfolio Version & Links -->
+          <div class="flex flex-col md:flex-row items-center justify-center gap-4 text-slate-500 text-sm">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-1 text-[10px] font-medium bg-primary/20 text-primary rounded-full uppercase tracking-wider">{{ footerData.version || 'v2.0.0' }}</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <a v-for="link in footerData.links" :key="link.label" :href="link.url" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors text-xs">{{ link.label }}</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -48,6 +66,24 @@ import { ref, onMounted } from 'vue';
 import api from '@/api/api';
 
 const logoUrl = ref(localStorage.getItem('boniq_logo') || null);
+const footerData = ref({
+  siteName: 'boniq',
+  tagline: "Let's collaborate on your next project and bring your visionary ideas to life.",
+  ctaText: "Start a Conversation",
+  copyrightText: "All Rights Reserved.",
+  version: "v2.0.0",
+  showCredits: true,
+  credits: [
+    { icon: '🎨', text: 'Designed by boniq' },
+    { icon: '⚙️', text: 'Developed by boniq' },
+    { icon: '🚀', text: 'Powered by Vue 3' },
+  ],
+  links: [
+    { label: 'Privacy', url: '/privacy' },
+    { label: 'Terms', url: '/terms' },
+    { label: 'GitHub', url: 'https://github.com/boniq' },
+  ],
+});
 
 onMounted(async () => {
   if (!logoUrl.value) {
@@ -56,6 +92,10 @@ onMounted(async () => {
       if (res.data?.logoUrl) {
         logoUrl.value = res.data.logoUrl;
         localStorage.setItem('boniq_logo', res.data.logoUrl);
+      }
+      // Merge footer data from profile if available
+      if (res.data?.footerData) {
+        footerData.value = { ...footerData.value, ...res.data.footerData };
       }
     } catch (e) {}
   }

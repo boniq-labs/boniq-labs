@@ -54,7 +54,7 @@
             <div class="absolute inset-[54px] rounded-full bg-gradient-to-bl from-secondary/5 to-transparent animate-spin-slow" style="animation-duration: 20s;"></div>
             
             <!-- Avatar / Graphic -->
-            <div @click="handleProfileClick" class="absolute inset-[72px] rounded-full flex items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-500/30 via-purple-500/15 to-transparent backdrop-blur-xl border border-white/20 shadow-[0_0_80px_rgba(139,92,246,0.3)] hover:shadow-[0_0_120px_rgba(139,92,246,0.5)] transition-all duration-700 hover:scale-105 group cursor-pointer">
+            <div class="absolute inset-[72px] rounded-full flex items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-500/30 via-purple-500/15 to-transparent backdrop-blur-xl border border-white/20 shadow-[0_0_80px_rgba(139,92,246,0.3)] hover:shadow-[0_0_120px_rgba(139,92,246,0.5)] transition-all duration-700 hover:scale-105 group cursor-pointer">
               <img v-if="profile.avatarUrl" :src="profile.avatarUrl" alt="Profile" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
               <span v-else class="text-[100px] md:text-[140px] filter drop-shadow-2xl group-hover:scale-110 transition-transform duration-500 select-none">👨‍💻</span>
               <div class="absolute inset-0 bg-gradient-to-t from-dark/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -99,7 +99,6 @@ import { useRouter } from 'vue-router';
 import api from '@/api/api';
 
 const router = useRouter();
-const profileClicks = ref(0);
 const loading = ref(true);
 const profile = ref({
   name: '',
@@ -110,24 +109,9 @@ const profile = ref({
   cvUrl: ''
 });
 
-let clickTimeout = null;
-
 const getWhatsAppUrl = (value) => {
   if (!value) return '#';
   return value.startsWith('http') ? value : `https://wa.me/${value}`;
-};
-
-const handleProfileClick = () => {
-  profileClicks.value++;
-  if (profileClicks.value >= 4) {
-    router.push('/admin');
-  } else if (profileClicks.value === 3) {
-    console.log('Almost there... one more click!');
-  }
-  clearTimeout(clickTimeout);
-  clickTimeout = setTimeout(() => {
-    profileClicks.value = 0;
-  }, 1000);
 };
 
 onMounted(async () => {

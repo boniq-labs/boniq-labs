@@ -1,22 +1,41 @@
 <template>
-  <div class="min-h-screen pt-24 pb-20 px-4">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="section-title animate-fade-in-up">Projects Matrix</h2>
-      
-      <div class="flex flex-wrap justify-center gap-3 mb-12 animate-fade-in-up" style="animation-delay: 0.1s;">
+  <div class="min-h-screen pt-24 pb-20 px-4 relative overflow-hidden">
+    <!-- Background decorative elements -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-pulse"></div>
+      <div class="absolute bottom-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
+    </div>
+
+    <div class="max-w-6xl mx-auto relative z-10">
+      <header class="text-center mb-16 animate-fade-in-up">
+        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold uppercase tracking-wider mb-6">Portfolio</span>
+        <h2 class="section-title">Projects Matrix</h2>
+        <p class="mt-4 max-w-2xl mx-auto text-slate-400 text-lg">A curated collection of my work spanning various domains and technologies</p>
+      </header>
+
+      <!-- Filter Tabs -->
+      <div class="flex flex-wrap justify-center gap-2 mb-12 animate-fade-in-up" style="animation-delay: 0.1s;">
         <button 
           v-for="tech in allTechnologies" 
           :key="tech"
           @click="activeFilter = tech"
           :class="[
-            'px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 border backdrop-blur-sm',
+            'px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 border backdrop-blur-sm',
             activeFilter === tech 
-              ? 'bg-primary/20 text-white border-primary shadow-[0_0_15px_rgba(139,92,246,0.5)]' 
-              : 'bg-white/5 text-slate-300 border-white/10 hover:border-white/30 hover:text-white'
+              ? 'bg-gradient-to-r from-primary to-blue-600 text-white border-transparent shadow-[0_0_20px_rgba(139,92,246,0.4)]' 
+              : 'bg-white/5 text-slate-300 border-white/10 hover:border-white/30 hover:text-white hover:bg-white/10'
           ]"
         >
           {{ tech }}
         </button>
+      </div>
+
+      <!-- Project Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 animate-fade-in-up" style="animation-delay: 0.2s;">
+        <StatCard label="Total Projects" :value="projects.length" icon="📦" color="cyan" />
+        <StatCard label="Technologies" :value="allTechnologies.length - 1" icon="⚙️" color="violet" />
+        <StatCard label="Featured" :value="featuredCount" icon="⭐" color="amber" />
+        <StatCard label="Categories" :value="categories.length" icon="📂" color="emerald" />
       </div>
 
       <div v-if="loading" class="flex justify-center items-center py-20">
@@ -28,7 +47,7 @@
       
       <div v-else-if="error" class="text-center glass-card max-w-md mx-auto p-8 rounded-2xl border-red-500/30">
         <div class="text-red-400 text-6xl mb-4">⚠️</div>
-        <h3 class="text-xl font-bold text-white mb-2">Oops! Let's pretend that worked.</h3>
+        <h3 class="text-xl font-bold text-white mb-2">Failed to load projects</h3>
         <p class="text-slate-400">{{ error }}</p>
       </div>
       
@@ -39,11 +58,21 @@
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <transition-group name="project-list">
+        <transition-group name="project-list" tag="div">
           <div v-for="(project, index) in filteredProjects" :key="project._id || index" class="h-full">
-            <ProjectCard :project="project" />
+            <ProjectCard :project="project" :index="index" />
           </div>
         </transition-group>
+      </div>
+
+      <!-- Pagination / Load More placeholder -->
+      <div v-if="filteredProjects.length > 9" class="mt-12 text-center animate-fade-in-up">
+        <button class="btn-outline px-8 py-3" @click="loadMore">
+          <span class="flex items-center justify-center gap-2">
+            Load More Projects
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+          </span>
+        </button>
       </div>
     </div>
   </div>
@@ -58,6 +87,18 @@ const projects = ref([]);
 const loading = ref(true);
 const error = ref(null);
 const activeFilter = ref('All');
+const displayedCount = ref(9);
+
+const StatCard = {
+  template: `
+    <div class="glass-card p-4 rounded-xl text-center group hover:border-primary/30 hover:bg-white/10 transition-all">
+      <span class="text-2xl">{{ icon }}</span>
+      <p class="mt-2 text-3xl font-black text-white">{{ value }}</p>
+      <p class="text-xs text-slate-500 uppercase tracking-wider">{{ label }}</p>
+    </div>
+  `,
+  props: ['label', 'value', 'icon', 'color']
+}
 
 onMounted(async () => {
   try {
@@ -80,12 +121,27 @@ const allTechnologies = computed(() => {
   return Array.from(techs);
 });
 
-const filteredProjects = computed(() => {
-  if (activeFilter.value === 'All') {
-    return projects.value;
-  }
-  return projects.value.filter(p => p.technologies && p.technologies.includes(activeFilter.value));
+const categories = computed(() => {
+  const cats = new Set();
+  projects.value.forEach(p => {
+    if(p.category) cats.add(p.category);
+  });
+  return Array.from(cats);
 });
+
+const featuredCount = computed(() => projects.value.filter(p => p.featured).length);
+
+const filteredProjects = computed(() => {
+  let result = projects.value;
+  if (activeFilter.value !== 'All') {
+    result = result.filter(p => p.technologies && p.technologies.includes(activeFilter.value));
+  }
+  return result.slice(0, displayedCount.value);
+});
+
+const loadMore = () => {
+  displayedCount.value += 6;
+};
 </script>
 
 <style scoped>
@@ -100,5 +156,9 @@ const filteredProjects = computed(() => {
 }
 .project-list-leave-active {
   position: absolute;
+}
+
+.btn-outline {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/[0.03] px-8 py-3 text-white font-bold hover:bg-white/10 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1;
 }
 </style>

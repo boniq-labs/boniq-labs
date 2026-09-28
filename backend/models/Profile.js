@@ -85,7 +85,28 @@ const Profile = sequelize.define('Profile', {
   seoKeywords: {
     type: DataTypes.TEXT,
     defaultValue: 'developer, portfolio, full stack, web development, software engineer',
-  }
+  },
+  footerData: {
+    type: DataTypes.JSON,
+    defaultValue: {
+      siteName: 'boniq',
+      tagline: "Let's collaborate on your next project and bring your visionary ideas to life.",
+      ctaText: "Start a Conversation",
+      copyrightText: "All Rights Reserved.",
+      version: "v2.0.0",
+      showCredits: true,
+      credits: [
+        { icon: '🎨', text: 'Designed by boniq' },
+        { icon: '⚙️', text: 'Developed by boniq' },
+        { icon: '🚀', text: 'Powered by Vue 3' },
+      ],
+      links: [
+        { label: 'Privacy', url: '/privacy' },
+        { label: 'Terms', url: '/terms' },
+        { label: 'GitHub', url: 'https://github.com/boniq' },
+      ],
+    },
+  },
 }, {
   timestamps: true,
 });

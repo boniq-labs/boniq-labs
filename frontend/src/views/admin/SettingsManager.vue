@@ -141,6 +141,68 @@
         </form>
       </div>
 
+      <!-- Footer Management -->
+      <div class="card lg:col-span-2">
+        <h2 class="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+          <span class="p-2 rounded-xl bg-pink-500/20 text-pink-300">🦶</span>
+          Footer Management
+        </h2>
+        <form @submit.prevent="saveFooter" class="space-y-6">
+          <div class="grid gap-6 md:grid-cols-2">
+            <FormField label="Site Name">
+              <input v-model="footerForm.siteName" type="text" class="input-field" placeholder="boniq" />
+            </FormField>
+            <FormField label="Version">
+              <input v-model="footerForm.version" type="text" class="input-field" placeholder="v2.0.0" />
+            </FormField>
+            <FormField label="CTA Button Text">
+              <input v-model="footerForm.ctaText" type="text" class="input-field" placeholder="Start a Conversation" />
+            </FormField>
+            <FormField label="Copyright Text">
+              <input v-model="footerForm.copyrightText" type="text" class="input-field" placeholder="All Rights Reserved." />
+            </FormField>
+          </div>
+
+          <FormField label="Tagline / Description">
+            <textarea v-model="footerForm.tagline" rows="2" class="input-field textarea-field" placeholder="Let's collaborate on your next project..."></textarea>
+          </FormField>
+
+          <FormField label="Show Credits">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" v-model="footerForm.showCredits" class="w-5 h-5 rounded border-white/20 bg-slate-800 text-primary focus:ring-primary" />
+              <span class="text-slate-300">Display credits in footer</span>
+            </label>
+          </FormField>
+
+          <FormField label="Footer Credits" class="md:col-span-2">
+            <div class="space-y-3">
+              <div v-for="(credit, idx) in footerForm.credits" :key="idx" class="flex items-center gap-3">
+                <input v-model="credit.icon" type="text" class="input-field w-12" placeholder="🎨" />
+                <input v-model="credit.text" type="text" class="input-field flex-1" placeholder="Designed by boniq" />
+                <button type="button" @click="footerForm.credits.splice(idx, 1)" class="btn-sm btn-sm-red">Remove</button>
+              </div>
+              <button type="button" @click="footerForm.credits.push({ icon: '✨', text: '' })" class="btn-secondary btn-sm">+ Add Credit</button>
+            </div>
+          </FormField>
+
+          <FormField label="Footer Links" class="md:col-span-2">
+            <div class="space-y-3">
+              <div v-for="(link, idx) in footerForm.links" :key="idx" class="flex items-center gap-3">
+                <input v-model="link.label" type="text" class="input-field w-32" placeholder="Privacy" />
+                <input v-model="link.url" type="text" class="input-field flex-1" placeholder="/privacy" />
+                <button type="button" @click="footerForm.links.splice(idx, 1)" class="btn-sm btn-sm-red">Remove</button>
+              </div>
+              <button type="button" @click="footerForm.links.push({ label: '', url: '' })" class="btn-secondary btn-sm">+ Add Link</button>
+            </div>
+          </FormField>
+
+          <button type="submit" class="btn-primary" :disabled="savingFooter">
+            <span v-if="savingFooter" class="flex items-center gap-2"><span class="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></span>Saving...</span>
+            <span v-else>Save Footer Settings</span>
+          </button>
+        </form>
+      </div>
+
       <!-- Maintenance -->
       <div class="card lg:col-span-2">
         <h2 class="text-lg font-semibold text-white mb-6 flex items-center gap-2">
@@ -186,8 +248,28 @@ const changingPw = ref(false);
 const pwError = ref('');
 const savingSite = ref(false);
 const savingSEO = ref(false);
+const savingFooter = ref(false);
 const loading = ref(false);
 const uploading = ref({ logo: false, favicon: false });
+
+const footerForm = ref({
+  siteName: 'boniq',
+  tagline: "Let's collaborate on your next project and bring your visionary ideas to life.",
+  ctaText: "Start a Conversation",
+  copyrightText: "All Rights Reserved.",
+  version: "v2.0.0",
+  showCredits: true,
+  credits: [
+    { icon: '🎨', text: 'Designed by boniq' },
+    { icon: '⚙️', text: 'Developed by boniq' },
+    { icon: '🚀', text: 'Powered by Vue 3' },
+  ],
+  links: [
+    { label: 'Privacy', url: '/privacy' },
+    { label: 'Terms', url: '/terms' },
+    { label: 'GitHub', url: 'https://github.com/boniq' },
+  ],
+});
 
 const loadSettings = async () => {
   try {
@@ -204,6 +286,11 @@ const loadSettings = async () => {
       seoForm.value.title = profileRes.data.seoTitle || 'boniq - Full Stack Developer Portfolio';
       seoForm.value.description = profileRes.data.seoDescription || 'Full Stack Developer portfolio showcasing projects, skills, and experience.';
       seoForm.value.keywords = profileRes.data.seoKeywords || 'developer, portfolio, full stack, web development';
+      
+      // Load footer data
+      if (profileRes.data.footerData) {
+        footerForm.value = { ...footerForm.value, ...profileRes.data.footerData };
+      }
     }
     viewsForm.value.views = statsRes.data?.views || 0;
   } catch (e) { console.error('Load settings failed:', e); }
@@ -262,6 +349,21 @@ const saveViews = async () => {
     await axios.put('/api/stats', { views: viewsForm.value.views }, getAuthConfig());
     showToast('success', 'View counter updated');
   } catch (e) { showToast('error', e.response?.data?.message || 'Failed'); }
+};
+
+const saveFooter = async () => {
+  savingFooter.value = true;
+  try {
+    const payload = {
+      footerData: footerForm.value,
+    };
+    const res = await axios.put('/api/profile', payload, getAuthConfig());
+    if (res.data?.footerData) {
+      footerForm.value = { ...footerForm.value, ...res.data.footerData };
+    }
+    showToast('success', 'Footer settings saved');
+  } catch (e) { showToast('error', e.response?.data?.message || 'Failed'); }
+  finally { savingFooter.value = false; }
 };
 
 const resetViews = async () => {

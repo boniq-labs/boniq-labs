@@ -30,7 +30,8 @@ export const updateProfile = async (req, res) => {
       'email', 'phone', 'location',
       'whatsapp', 'linkedin', 'instagram', 'github', 'twitter', 'dribbble',
       'logoUrl', 'faviconUrl', 'siteUrl',
-      'seoTitle', 'seoDescription', 'seoKeywords'
+      'seoTitle', 'seoDescription', 'seoKeywords',
+      'footerData'
     ];
 
     allowedFields.forEach(key => {
