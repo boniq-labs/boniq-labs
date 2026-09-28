@@ -22,6 +22,18 @@ const Skill = sequelize.define('Skill', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  published: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  order: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  }
 }, {
   timestamps: true,
 });

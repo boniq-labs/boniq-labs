@@ -14,6 +14,9 @@ import authRoutes from './routes/authRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import experienceRoutes from './routes/experienceRoutes.js';
+import educationRoutes from './routes/educationRoutes.js';
+import serviceRoutes from './routes/serviceRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 connectDB().then(() => {
@@ -38,6 +41,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/experience', experienceRoutes);
+app.use('/api/education', educationRoutes);
+app.use('/api/services', serviceRoutes);
 
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

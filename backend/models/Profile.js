@@ -26,6 +26,18 @@ const Profile = sequelize.define('Profile', {
     type: DataTypes.STRING,
     defaultValue: '',
   },
+  email: {
+    type: DataTypes.STRING,
+    defaultValue: '',
+  },
+  phone: {
+    type: DataTypes.STRING,
+    defaultValue: '',
+  },
+  location: {
+    type: DataTypes.STRING,
+    defaultValue: '',
+  },
   whatsapp: {
     type: DataTypes.STRING,
     defaultValue: '',
@@ -38,13 +50,41 @@ const Profile = sequelize.define('Profile', {
     type: DataTypes.STRING,
     defaultValue: '',
   },
+  github: {
+    type: DataTypes.STRING,
+    defaultValue: '',
+  },
+  twitter: {
+    type: DataTypes.STRING,
+    defaultValue: '',
+  },
+  dribbble: {
+    type: DataTypes.STRING,
+    defaultValue: '',
+  },
   logoUrl: {
+    type: DataTypes.STRING,
+    defaultValue: '',
+  },
+  faviconUrl: {
     type: DataTypes.STRING,
     defaultValue: '',
   },
   siteUrl: {
     type: DataTypes.STRING,
     defaultValue: '',
+  },
+  seoTitle: {
+    type: DataTypes.STRING,
+    defaultValue: 'boniq - Full Stack Developer Portfolio',
+  },
+  seoDescription: {
+    type: DataTypes.TEXT,
+    defaultValue: 'Full Stack Developer portfolio showcasing projects, skills, and experience.',
+  },
+  seoKeywords: {
+    type: DataTypes.TEXT,
+    defaultValue: 'developer, portfolio, full stack, web development, software engineer',
   }
 }, {
   timestamps: true,

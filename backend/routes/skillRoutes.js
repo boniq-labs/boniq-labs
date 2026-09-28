@@ -1,5 +1,5 @@
 import express from 'express';
-import { getSkills, createSkill, updateSkill, deleteSkill } from '../controllers/skillController.js';
+import { getSkills, createSkill, updateSkill, deleteSkill, reorderSkills } from '../controllers/skillController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -7,6 +7,9 @@ const router = express.Router();
 router.route('/')
     .get(getSkills)
     .post(protect, createSkill);
+
+router.route('/reorder')
+    .put(protect, reorderSkills);
 
 router.route('/:id')
     .put(protect, updateSkill)

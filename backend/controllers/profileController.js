@@ -25,19 +25,19 @@ export const updateProfile = async (req, res) => {
       profile = await Profile.create({});
     }
 
-    const { name, greeting, role, bio, avatarUrl, cvUrl, whatsapp, linkedin, instagram, logoUrl, siteUrl } = req.body;
+    const allowedFields = [
+      'name', 'greeting', 'role', 'bio', 'avatarUrl', 'cvUrl',
+      'email', 'phone', 'location',
+      'whatsapp', 'linkedin', 'instagram', 'github', 'twitter', 'dribbble',
+      'logoUrl', 'faviconUrl', 'siteUrl',
+      'seoTitle', 'seoDescription', 'seoKeywords'
+    ];
 
-    profile.name = name !== undefined ? name : profile.name;
-    profile.greeting = greeting !== undefined ? greeting : profile.greeting;
-    profile.role = role !== undefined ? role : profile.role;
-    profile.bio = bio !== undefined ? bio : profile.bio;
-    profile.avatarUrl = avatarUrl !== undefined ? avatarUrl : profile.avatarUrl;
-    profile.cvUrl = cvUrl !== undefined ? cvUrl : profile.cvUrl;
-    profile.whatsapp = whatsapp !== undefined ? whatsapp : profile.whatsapp;
-    profile.linkedin = linkedin !== undefined ? linkedin : profile.linkedin;
-    profile.instagram = instagram !== undefined ? instagram : profile.instagram;
-    profile.logoUrl = logoUrl !== undefined ? logoUrl : profile.logoUrl;
-    profile.siteUrl = siteUrl !== undefined ? siteUrl : profile.siteUrl;
+    allowedFields.forEach(key => {
+      if (req.body[key] !== undefined) {
+        profile[key] = req.body[key];
+      }
+    });
 
     const updatedProfile = await profile.save();
     res.json(updatedProfile);

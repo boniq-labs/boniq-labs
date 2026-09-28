@@ -10,9 +10,17 @@ const Project = sequelize.define('Project', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  shortDescription: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   imageUrl: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  images: {
+    type: DataTypes.JSON,
+    defaultValue: [],
   },
   githubLink: {
     type: DataTypes.STRING,
@@ -20,10 +28,26 @@ const Project = sequelize.define('Project', {
   liveDemo: {
     type: DataTypes.STRING,
   },
+  category: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   technologies: {
     type: DataTypes.JSON, // Stores an array of strings in MySQL JSON column
     defaultValue: [],
   },
+  featured: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  published: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  order: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  }
 }, {
   timestamps: true,
 });
