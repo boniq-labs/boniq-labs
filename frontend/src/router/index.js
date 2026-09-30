@@ -14,7 +14,19 @@ const router = createRouter({
             path: '/admin/dashboard',
             name: 'admin-dashboard',
             component: () => import('../views/admin/Dashboard.vue'),
-            meta: { requiresAuth: true }
+            meta: { requiresAuth: true },
+            children: [
+                { path: '', redirect: 'overview' },
+                { path: 'overview', name: 'admin-overview', component: () => import('../views/admin/DashboardOverview.vue') },
+                { path: 'profile', name: 'admin-profile', component: () => import('../views/admin/ProfileManager.vue') },
+                { path: 'projects', name: 'admin-projects', component: () => import('../views/admin/ProjectManager.vue') },
+                { path: 'skills', name: 'admin-skills', component: () => import('../views/admin/SkillManager.vue') },
+                { path: 'experience', name: 'admin-experience', component: () => import('../views/admin/ExperienceManager.vue') },
+                { path: 'education', name: 'admin-education', component: () => import('../views/admin/EducationManager.vue') },
+                { path: 'services', name: 'admin-services', component: () => import('../views/admin/ServiceManager.vue') },
+                { path: 'inbox', name: 'admin-inbox', component: () => import('../views/admin/InboxManager.vue') },
+                { path: 'settings', name: 'admin-settings', component: () => import('../views/admin/SettingsManager.vue') },
+            ]
         }
     ],
     scrollBehavior() {

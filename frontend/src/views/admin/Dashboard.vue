@@ -61,7 +61,7 @@
                     :key="item.key"
                     :to="item.path"
                     class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-200"
-                    :class="activeTab === item.key ? 'bg-gradient-to-r from-primary/20 to-blue-600/20 text-white shadow-[0_4px_14px_rgba(59,130,246,0.15)]' : ''"
+                    :class="isActiveRoute(item.path) ? 'bg-gradient-to-r from-primary/20 to-blue-600/20 text-white shadow-[0_4px_14px_rgba(59,130,246,0.15)]' : ''"
                   >
                     <span v-html="item.icon" class="h-5 w-5 flex-shrink-0"></span>
                     <span v-if="!sidebarCollapsed">{{ item.label }}</span>
@@ -74,7 +74,7 @@
               v-else
               :to="section.path"
               class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-200"
-              :class="activeTab === section.key ? 'bg-gradient-to-r from-primary/20 to-blue-600/20 text-white shadow-[0_4px_14px_rgba(59,130,246,0.15)]' : ''"
+              :class="isActiveRoute(section.path) ? 'bg-gradient-to-r from-primary/20 to-blue-600/20 text-white shadow-[0_4px_14px_rgba(59,130,246,0.15)]' : ''"
             >
               <span v-html="section.icon" class="h-5 w-5 flex-shrink-0"></span>
               <span v-if="!sidebarCollapsed">{{ section.label }}</span>
@@ -151,12 +151,15 @@
             </svg>
             <div class="leading-6 font-semibold pr-4">{{ toast.message }}</div>
             <button @click="removeToast(toast.id)" class="absolute right-3 top-3 text-white/40 hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              <svg xmlns="http://www.w3.org/2000.svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
         </Teleport>
 
-        <component :is="currentView" :refresh-key="refreshKey" />
+        <!-- Nested Router View for Admin Pages -->
+        <router-view v-slot="{ Component }">
+          <component :is="Component" :refresh-key="refreshKey" />
+        </router-view>
       </div>
     </main>
   </div>
@@ -167,17 +170,6 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import { useAuthStore } from '../../stores/auth';
-
-// Views
-import DashboardOverview from './DashboardOverview.vue';
-import ProfileManager from './ProfileManager.vue';
-import ProjectManager from './ProjectManager.vue';
-import SkillManager from './SkillManager.vue';
-import ExperienceManager from './ExperienceManager.vue';
-import EducationManager from './EducationManager.vue';
-import ServiceManager from './ServiceManager.vue';
-import InboxManager from './InboxManager.vue';
-import SettingsManager from './SettingsManager.vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -193,17 +185,17 @@ const logoUrl = ref(localStorage.getItem('boniq_logo') || null);
 const avatarUrl = ref(localStorage.getItem('boniq_avatar') || null);
 
 const navSections = [
-  { key: 'overview', label: 'Overview', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>', path: '/admin/dashboard' },
+  { key: 'overview', label: 'Overview', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>', path: '/admin/dashboard/overview' },
   { 
     key: 'content', 
     label: 'Content', 
     icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>',
     children: [
-      { key: 'projects', label: 'Projects', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>', path: '/admin/projects' },
-      { key: 'skills', label: 'Skills', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>', path: '/admin/skills' },
-      { key: 'experience', label: 'Experience', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>', path: '/admin/experience' },
-      { key: 'education', label: 'Education', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg>', path: '/admin/education' },
-      { key: 'services', label: 'Services', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>', path: '/admin/services' },
+      { key: 'projects', label: 'Projects', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>', path: '/admin/dashboard/projects' },
+      { key: 'skills', label: 'Skills', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>', path: '/admin/dashboard/skills' },
+      { key: 'experience', label: 'Experience', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>', path: '/admin/dashboard/experience' },
+      { key: 'education', label: 'Education', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg>', path: '/admin/dashboard/education' },
+      { key: 'services', label: 'Services', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>', path: '/admin/dashboard/services' },
     ]
   },
   { 
@@ -211,24 +203,12 @@ const navSections = [
     label: 'Management', 
     icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>',
     children: [
-      { key: 'profile', label: 'Profile', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>', path: '/admin/profile' },
-      { key: 'inbox', label: 'Inbox', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>', path: '/admin/inbox', badge: '0' },
-      { key: 'settings', label: 'Settings', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>', path: '/admin/settings' },
+      { key: 'profile', label: 'Profile', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>', path: '/admin/dashboard/profile' },
+      { key: 'inbox', label: 'Inbox', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>', path: '/admin/dashboard/inbox', badge: '0' },
+      { key: 'settings', label: 'Settings', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-2.573-1.066c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>', path: '/admin/dashboard/settings' },
     ]
   },
 ];
-
-const viewsMap = {
-  overview: DashboardOverview,
-  projects: ProjectManager,
-  skills: SkillManager,
-  experience: ExperienceManager,
-  education: EducationManager,
-  services: ServiceManager,
-  profile: ProfileManager,
-  inbox: InboxManager,
-  settings: SettingsManager,
-};
 
 const pageTitles = {
   overview: 'Dashboard',
@@ -242,14 +222,22 @@ const pageTitles = {
   settings: 'Settings',
 };
 
-const currentView = computed(() => {
-  const key = route.params.tab || 'overview';
-  return viewsMap[key] || DashboardOverview;
+const activeTab = computed(() => {
+  const path = route.path;
+  if (path === '/admin/dashboard' || path === '/admin/dashboard/overview') return 'overview';
+  if (path === '/admin/dashboard/projects') return 'projects';
+  if (path === '/admin/dashboard/skills') return 'skills';
+  if (path === '/admin/dashboard/experience') return 'experience';
+  if (path === '/admin/dashboard/education') return 'education';
+  if (path === '/admin/dashboard/services') return 'services';
+  if (path === '/admin/dashboard/profile') return 'profile';
+  if (path === '/admin/dashboard/inbox') return 'inbox';
+  if (path === '/admin/dashboard/settings') return 'settings';
+  return 'overview';
 });
 
 const pageTitle = computed(() => {
-  const key = route.params.tab || 'overview';
-  return pageTitles[key] || 'Dashboard';
+  return pageTitles[activeTab.value] || 'Dashboard';
 });
 
 const profileInitials = computed(() => {
@@ -315,17 +303,15 @@ const fetchProfileAssets = async () => {
       avatarUrl.value = res.data.avatarUrl;
       localStorage.setItem('boniq_avatar', res.data.avatarUrl);
     }
-    if (authStore.user && route.params.tab === 'inbox') {
-      // Update inbox badge
-      const msgRes = await axios.get('/api/messages', getAuthConfig());
-      const unread = msgRes.data?.filter(m => !m.isRead).length || 0;
-      // Badge updates via reactive navSections
-    }
   } catch (e) {}
 };
 
 const handleRouteChange = () => {
   sidebarOpen.value = false;
+};
+
+const isActiveRoute = (path) => {
+  return route.path === path;
 };
 
 onMounted(() => {
@@ -338,12 +324,6 @@ onUnmounted(() => {
 });
 
 // Provide global functions to child components
-const provide = {
-  showToast,
-  getAuthConfig,
-  refreshKey,
-};
-
 import { provide as provideFn } from 'vue';
 provideFn('toast', { show: showToast });
 provideFn('auth', { getAuthConfig });
